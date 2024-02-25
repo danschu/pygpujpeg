@@ -1,0 +1,22 @@
+ifndef PYTHON_VERSION
+PYTHON_VERSION=$(shell python3 -c "import sys; print('%d.%d' % (sys.version_info.major, sys.version_info.minor,))")
+endif
+
+ifndef PYTHON_BIN
+PYTHON_BIN=python${PYTHON_VERSION}
+endif
+
+all: pygpujpeg
+
+out:
+	mkdir out
+
+pygpujpeg: ./build/gpujpeg.lib
+	${PYTHON_BIN} setup.py build
+
+clean:
+	rm -Rf out build dist pygpujpeg.egg-info
+
+release: clean pygpujpeg
+	${PYTHON_BIN} setup.py sdist
+	${PYTHON_BIN} -m twine upload dist/*
